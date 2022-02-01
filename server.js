@@ -11,7 +11,7 @@ server.use(cors());
 server.get('/', Home);
 server.get('/favorite', Favorite);
 server.get('*', InCase1);
-server.get('*', InCase2);
+server.get(errorFix);
 
 function Info(title , poster_path ,overview) {
     this.title = title;
@@ -20,10 +20,7 @@ function Info(title , poster_path ,overview) {
 }
 
 function Home(request, response) {
-  
     let obj =  new Info(info.title , info.poster_path , info.overview);
-
-    
     return response.status(200).json(obj);
 }
 
@@ -31,12 +28,17 @@ function Favorite(request, response) {
     response.status(200).send("Welcome to Favorite Page");
 }
 
+function errorFix(error,res,req){
+  const err =  {
+        status: 500,
+        message: error
+    }
+    res.status(500).send(err);
+}
 function InCase1(request, response) {
     response.status(404).send("We sorry, you chosed something not exist ");
 }
-function InCase2(request, response) {
-    response.status(500).send("Sorry, something went wrong");
-}
+
 
 server.listen(3000, () => {
     console.log("You'r now listening to Rawzi's server");
