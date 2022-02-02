@@ -2,13 +2,21 @@
 
 const express = require('express');
 const cors = require('cors');
+ Task12
 const axios = require('axios');
 const pg = require('pg');
 // const PORT = process.env.PORT;
 // const info = require('./data.json');
 
 
+Task13
 require('dotenv').config();
+
+
+const info = require('./data.json');
+ main
+
+ main
 
 const server = express();
 server.use(cors());
@@ -16,6 +24,7 @@ server.use(express.json());
 
 server.get('/', Home);
 server.get('/favorite', Favorite);
+Task12
 server.get('/trending', GetTranding);
 server.get('/search', GetSearch);
 
@@ -31,13 +40,23 @@ const client = new pg.Client(process.env.DATABASE_URL)
 
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
+
+server.get('*', InCase1);
+server.get('*', InCase2);
+
+function Info(title , poster_path ,overview) {
+ main
     this.title = title;
     this.release_date = release_date;
     this.poster_path = poster_path;
     this.overview = overview;
 }
 
+function Home(request, response) {
+  
+    let obj =  new Info(info.title , info.poster_path , info.overview);
 
+ Task12
 function Home(request, response) {
     response.status(200).send("This is a home page");
 }
@@ -69,6 +88,7 @@ function GetSearch(req, res) {
     })
 }
 
+ Task13
 //==================================== New Branch ===============================================
 function addBestMov(req, res) {
     const mov = req.body;
@@ -93,10 +113,17 @@ function getBestMov(req , res){
 
 //==============================================================================================
 
+    
+    return response.status(200).json(obj);
+}
+
+ main
+ main
 function Favorite(request, response) {
     response.status(200).send("Welcome to Favorite Page");
 }
 
+ Task12
 function errorFix(error, res, req) {
     const err = {
         status: 500,
@@ -108,8 +135,24 @@ function InCase(request, response) {
     response.status(404).send("We sorry, you chosed something not exist ");
 }
 
+ Task13
 client.connect().then(() => {
     server.listen(3000, () => {
         console.log("You'r now listening to 3000");
     })
+
+
+server.listen(3000, () => {
+
+function InCase1(request, response) {
+    response.status(404).send("We sorry, you chosed something not exist ");
+}
+function InCase2(request, response) {
+    response.status(500).send("Sorry, something went wrong");
+}
+
+server.listen(3000, () => {
+    console.log("You'r now listening to Rawzi's server");
+ main
+ main
 })
