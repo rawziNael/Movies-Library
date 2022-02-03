@@ -5,6 +5,8 @@ const cors = require('cors');
  Task12
 const axios = require('axios');
 const pg = require('pg');
+const req = require('express/lib/request');
+const res = require('express/lib/response');
 // const PORT = process.env.PORT;
 // const info = require('./data.json');
 
@@ -31,6 +33,12 @@ server.get('/search', GetSearch);
 //Create request to the database
 server.post('/addMovie', addBestMov);
 server.get('/getMovies', getBestMov);
+
+//delete and update methods
+server.put('/update/:id', updateMovie);
+server.delete('/DELETE/:id', deleteMovie);
+
+
 
 //error handler
 server.get('*', InCase);
@@ -93,7 +101,7 @@ function GetSearch(req, res) {
 function addBestMov(req, res) {
     const mov = req.body;
     let sql = `INSERT INTO bestMovie(title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
-    let valArr= [mov.title , mov.release_date ,mov.poster_path,mov.overview];
+    let valArr= [mov.title , mov.release_date , mov.poster_path, mov.overview];
     client.query(sql,valArr).then(data =>{
         res.status(200).json(data.rows);
     }).catch(error => {
@@ -113,12 +121,43 @@ function getBestMov(req , res){
 
 //==============================================================================================
 
+
+//======================================Task14==================================================
+
+
+function updateMovie(req , res){
+    const id = req.params.id;
+    const movie = req.body;
+    const sql = `UPDATE bestMovie SET title = $1, release_date = $2, poster_path = $3, overview = $4 WHERE id = $5 RETURNING *;`;
+    let movies = [movie.title, movie.release_date, movie.poster_path, movie.overview,id];
+    client.query(sql,movies).then(data =>{
+        res.status(200).json(data.rows)
+    }).catch(error => {
+        errorFix(error,req,res)
+    });
+}
+
+function deleteMovie(req , res){
+    const id = req.params.id;
+    const sql = `DELETE FROM bestMovie WHERE id=${id};` 
+
+    client.query(sql).then(()=>{
+        res.status(204).json({});
+    }).catch(error=>{
+        errorHandler(error,req,res)
+    });
+}
+
+
+//=================================================================================================
+=======
     
     return response.status(200).json(obj);
 }
 
  main
  main
+
 function Favorite(request, response) {
     response.status(200).send("Welcome to Favorite Page");
 }
