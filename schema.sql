@@ -7,4 +7,4 @@
     poster_path VARCHAR(255),
     overview VARCHAR(255)
     );
-    
+
