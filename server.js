@@ -36,7 +36,8 @@ server.get('/getMovies', getBestMov);
 
 //delete and update methods
 server.put('/update/:id', updateMovie);
-server.delete('/DELETE/:id', deleteMovie);
+server.delete('/delete/:id', deleteMovie);
+server.get('/getMovie/:id' , getYourMovie)
 
 
 
@@ -143,14 +144,22 @@ function updateMovie(req , res){
 function deleteMovie(req , res){
     const id = req.params.id;
     const sql = `DELETE FROM bestMovie WHERE id=${id};` 
-
     client.query(sql).then(()=>{
-        res.status(204).json({});
+        res.status(200).json("The movie has been deleted");
     }).catch(error=>{
         errorHandler(error,req,res)
     });
 }
 
+function getYourMovie(req , res){
+    let id = req.params.id
+    let sql = `SELECT * FROM bestMovie WHERE id=${id};`;
+    client.query(sql).then(data=>{
+       res.status(200).json(data.rows);
+    }).catch(error=>{
+        errorHandler(error,req,res)
+    });
+}
 
 //=================================================================================================
 
