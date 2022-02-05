@@ -9,8 +9,6 @@ const req = require('express/lib/request');
 const res = require('express/lib/response');
 
 // const info = require('./data.json');
-heroku pg:psql -f schema.sql --app [movie-rawzi]
-
 
 require('dotenv').config();
 const PORT = process.env.PORT;
