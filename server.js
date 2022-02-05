@@ -2,16 +2,24 @@
 
 const express = require('express');
 const cors = require('cors');
+
 const axios = require('axios');
 const pg = require('pg');
 const req = require('express/lib/request');
 const res = require('express/lib/response');
 
 // const info = require('./data.json');
+heroku pg:psql -f schema.sql --app [movie-rawzi]
 
 
 require('dotenv').config();
 const PORT = process.env.PORT;
+
+
+const info = require('./data.json');
+
+
+
 
 const server = express();
 server.use(cors());
@@ -19,6 +27,7 @@ server.use(express.json());
 
 server.get('/', Home);
 server.get('/favorite', Favorite);
+
 server.get('/trending', GetTranding);
 server.get('/search', GetSearch);
 
@@ -37,24 +46,40 @@ server.get('/getMovie/:id' , getYourMovie)
 server.get('*', InCase);
 server.get(errorFix);
 
+
 // const client = new pg.Client(process.env.DATABASE_URL)
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 })
 
+const client = new pg.Client(process.env.DATABASE_URL);
+
+
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
+
+server.get('*', InCase1);
+server.get('*', InCase2);
+
+function Info(title , poster_path ,overview) {
+
     this.title = title;
     this.release_date = release_date;
     this.poster_path = poster_path;
     this.overview = overview;
 }
 
+function Home(request, response) {
+  
+    let obj =  new Info(info.title , info.poster_path , info.overview);
 
+ 
 function Home(request, response) {
     response.status(200).send("This is a home page");
 }
+
+//===============================================task12=====================================================
 
 function GetTranding(req, res) {
     let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}&language=en-US`;
@@ -65,8 +90,8 @@ function GetTranding(req, res) {
             return new Movie(film.id, film.title, film.release_date, film.poster_path, film.overview);
         })
         res.status(200).send(trendy);
-    }).catch((err) => {
-        console.log(err);
+    }).catch(error => {
+        errorFix(error, req, res)
     })
 }
 
@@ -79,9 +104,10 @@ function GetSearch(req, res) {
         })
         res.status(200).send(search);
     }).catch(error => {
-        errorFix(error,req,res)
+        errorFix(error, req, res)
     })
 }
+
 
 //==================================== New Branch ===============================================
 function addBestMov(req, res) {
@@ -89,23 +115,25 @@ function addBestMov(req, res) {
     let sql = `INSERT INTO bestMovie(title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
     let valArr= [mov.title , mov.release_date , mov.poster_path, mov.overview];
     client.query(sql,valArr).then(data =>{
+
         res.status(200).json(data.rows);
     }).catch(error => {
-        errorFix(error,req,res)
+        errorFix(error, req, res)
     });
 }
 
-function getBestMov(req , res){
-    let sql =`SELECT * FROM bestMovie;`
-    client.query(sql).then(data =>{
+function getBestMov(req, res) {
+    let sql = `SELECT * FROM bestMovie;`
+    client.query(sql).then(data => {
         res.status(200).json(data.rows);
     }).catch(error => {
-        errorFix(error,req,res)
+        errorFix(error, req, res)
     });
 }
 
 
 //==============================================================================================
+
 
 //======================================Task14==================================================
 
@@ -143,9 +171,16 @@ function getYourMovie(req , res){
 }
 
 //=================================================================================================
+
+    
+    return response.status(200).json(obj);
+}
+
+
 function Favorite(request, response) {
     response.status(200).send("Welcome to Favorite Page");
 }
+
 
 function errorFix(error, res, req) {
     const err = {
@@ -162,4 +197,17 @@ client.connect().then(()=>{
     server.listen(PORT,()=>{
         console.log(`listining to port ${PORT}`)
     })
+
+
+server.listen(3000, () => {
+
+function InCase1(request, response) {
+    response.status(404).send("We sorry, you chosed something not exist ");
+}
+function InCase2(request, response) {
+    response.status(500).send("Sorry, something went wrong");
+}
+
+server.listen(3000, () => {
+    console.log("You'r now listening to Rawzi's server");
 })
