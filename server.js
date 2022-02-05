@@ -6,11 +6,12 @@ const axios = require('axios');
 const pg = require('pg');
 const req = require('express/lib/request');
 const res = require('express/lib/response');
-// const PORT = process.env.PORT;
+
 // const info = require('./data.json');
 
 
 require('dotenv').config();
+const PORT = process.env.PORT;
 
 const server = express();
 server.use(cors());
@@ -36,7 +37,11 @@ server.get('/getMovie/:id' , getYourMovie)
 server.get('*', InCase);
 server.get(errorFix);
 
-const client = new pg.Client(process.env.DATABASE_URL)
+// const client = new pg.Client(process.env.DATABASE_URL)
+const client = new pg.Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+})
 
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
@@ -153,8 +158,8 @@ function InCase(request, response) {
     response.status(404).send("We sorry, you chosed something not exist ");
 }
 
-client.connect().then(() => {
-    server.listen(3000, () => {
-        console.log("You'r now listening to 3000");
+client.connect().then(()=>{
+    server.listen(PORT,()=>{
+        console.log(`listining to port ${PORT}`)
     })
 })
