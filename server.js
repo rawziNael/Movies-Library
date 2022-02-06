@@ -11,7 +11,6 @@ const res = require('express/lib/response');
 // const info = require('./data.json');
 
 
-
 require('dotenv').config();
 const PORT = process.env.PORT;
 
