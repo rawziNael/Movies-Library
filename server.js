@@ -10,6 +10,7 @@ const res = require('express/lib/response');
 
 // const info = require('./data.json');
 
+
 require('dotenv').config();
 const PORT = process.env.PORT;
 
@@ -45,11 +46,6 @@ server.get('*', InCase);
 server.get(errorFix);
 
 
-// const client = new pg.Client(process.env.DATABASE_URL)
-const client = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-})
 
 const client = new pg.Client(process.env.DATABASE_URL);
 
