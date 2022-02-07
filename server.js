@@ -37,7 +37,7 @@ server.get('/getMovie/:id', getYourMovie);
 server.get('*', pageError);
 server.get(errorFix);
 
-// const client = new pg.Client(process.env.DATABASE_URL);
+const client = new pg.Client(process.env.DATABASE_URL);
 
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
