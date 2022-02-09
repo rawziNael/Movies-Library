@@ -4,13 +4,17 @@ const express = require('express');
 const cors = require('cors');
 
 const axios = require('axios');
+require('dotenv').config();
+
+
+const axios = require('axios');
 const pg = require('pg');
 const req = require('express/lib/request');
 const res = require('express/lib/response');
 const movie = require('./data.json');
 
 require('dotenv').config();
-const PORT = process.env.PORT;
+
 
 const server = express();
 server.use(cors());
@@ -22,7 +26,15 @@ server.get('/favorite', Favorite);
 
 //Task12
 server.get('/trending', GetTranding);
-server.get('/search', GetSearch);
+server.get('/search' , GetSearch);
+//two route
+server.get('/discover_movie' , GetDisMov);
+server.get('/discover_tv' , GetDisTV);
+
+server.get('*', InCase);
+server.get(errorFix);
+
+const PORT = process.env.PORT;
 
 //Task13
 server.post('/addMovie', addBestMov);
@@ -38,10 +50,12 @@ server.get('*', pageError);
 server.get(errorFix);
 
 // const client = new pg.Client(process.env.DATABASE_URL);
+
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 })
+
 
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
@@ -90,8 +104,36 @@ function GetSearch(req, res) {
             return new Movie(film.id, film.title, film.release_date, film.poster_path, film.overview);
         })
         res.status(200).send(search);
+
+    }).catch((err) => {
+        errorFix(error, res, req)
+    })
+}
+
+function GetDisMov(req, res) {
+    let url = ` https://api.themoviedb.org/3/discover/movie?api_key=${process.env.APIKEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate`;
+    axios.get(url).then((result) => {
+        let discover = result.data.results.map(film => {
+            return new Movie(film.id, film.title, film.release_date, film.poster_path, film.overview);
+        })
+        res.status(200).send(discover);
+    }).catch((err) => {
+        errorFix(error, res, req)
+    })
+}
+function GetDisTV(req, res) {
+    let url = `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.APIKEY}&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false&with_watch_monetization_types=flatrate&with_status=0&with_type=0`;
+    axios.get(url).then((result) => {
+        let tv = result.data.results.map(film => {
+            return new Movie(film.id, film.title, film.release_date, film.poster_path, film.overview);
+        })
+        res.status(200).send(tv);
+    }).catch((err) => {
+        errorFix(error, res, req)
+
     }).catch(error => {
         errorFix(error, req, res)
+
     })
 }
 
@@ -118,7 +160,6 @@ function getBestMov(req, res) {
     });
 }
 
-
 //======================================Task14==================================================
 
 
@@ -132,6 +173,7 @@ function updateMovie(req, res) {
     }).catch(error => {
         errorFix(error, req, res)
     });
+
 }
 
 function deleteMovie(req, res) {
