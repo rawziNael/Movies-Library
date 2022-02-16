@@ -31,9 +31,6 @@ server.get('/search' , GetSearch);
 server.get('/discover_movie' , GetDisMov);
 server.get('/discover_tv' , GetDisTV);
 
-server.get('*', InCase);
-server.get(errorFix);
-
 const PORT = process.env.PORT;
 
 //Task13
