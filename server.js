@@ -42,7 +42,7 @@ const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 })
-
+//sadfsaf
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
     this.title = title;
